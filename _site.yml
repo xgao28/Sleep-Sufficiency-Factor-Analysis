@@ -1,0 +1,20 @@
+name: "my-website"
+output_dir: "."
+navbar:
+  title: "JSC370 Lab12"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "Data"
+      href: data.html
+    - text: "Model"
+      href: model.html
+    - text: "Analysis"
+      href: analysis.html
+  right:
+    - text: "My account"
+      href: https://github.com/xgao28
+output:
+  html_document:
+    theme: cosmo
+    css: styles.css

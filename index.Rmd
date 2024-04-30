@@ -1,0 +1,115 @@
+---
+title: "JSC370 Lab12"
+author: "Xinxiang Gao"
+output: 
+    html_document:
+        toc: TRUE
+        toc_float: TRUE
+---
+```{r setup, message=FALSE, echo=FALSE, warning=FALSE}
+library(tidyverse)
+library(plotly)
+library(widgetframe)
+library(tidytext)
+
+# INITALIZE CODE CHUNK OPTIONS
+knitr::opts_chunk$set(
+  warning = FALSE,
+  message = FALSE,
+  eval=TRUE,
+  echo = FALSE,
+  cache = TRUE,
+  fig.width = 7, 
+  fig.align = 'center',
+  fig.asp = 0.618,
+  out.width = "700px",
+  class.source = "code-r")
+```
+
+This is my JSC370 lab 12 website.
+
+```{r load-data}
+source("process_starbucks_data.R")
+```
+
+```{r plot1, class.source="code-r-small"}
+set_map_details <- list(
+  scope = 'usa',
+  projection = list(type = 'albers usa'),
+  showlakes = TRUE,
+  lakecolor = toRGB('steelblue')
+)
+
+# Make sure both maps are on the same color scale
+shadeLimit <- 125
+
+# Create hover text
+sb_locs_state$hover <-
+  with(
+    sb_locs_state,
+    paste(
+      "Number of Starbucks: ",
+      n_stores,
+      '<br>',
+      "State: ",
+      state.y,
+      '<br>',
+      "Population: ",
+      population
+    )
+  )
+
+# Create the map
+map1 <- plot_geo(sb_locs_state, locationmode = "USA-states") %>%
+  add_trace(
+    z =  ~ n_stores,
+    text =  ~ hover,
+    locations =  ~ state,
+    color =  ~ n_stores,
+    colors = "Purples"
+  ) %>%
+  layout(title = "Starbucks stores by state", geo = set_map_details)
+
+map2 <- plot_geo(sb_locs_state, locationmode = "USA-states") %>%
+  add_trace(
+    z = ~ population,
+    locations = ~ state,
+    text = ~ hover,
+    color = ~ population,
+    colors = 'Reds'
+  ) %>%
+  colorbar(title = "Population") %>%
+  layout(title = "Population by State", geo = set_map_details)
+
+p1 <- subplot(map1, map2)
+```
+
+```{r plot2, echo=FALSE}
+p2 <- sb_nutr %>%
+  unnest_tokens(word, Item, token = "words") %>%
+  filter(word %in% topwords$word) %>%
+  plot_ly(
+    x =  ~ Calories,
+    y =  ~ `Carb. (g)`,
+    z =  ~ `Protein (g)`,
+    type = "scatter3d",
+    mode = "markers",
+    color =  ~ word
+  )
+```
+
+## Showcasing plots {.tabset}
+
+### Figure 1
+
+```{r p1, echo=FALSE}
+p1
+```
+
+### Figure 2
+
+```{r p2, echo=FALSE}
+p2
+```
+
+
