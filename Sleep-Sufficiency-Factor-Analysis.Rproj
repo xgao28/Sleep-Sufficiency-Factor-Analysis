@@ -13,3 +13,4 @@ RnwWeave: Sweave
 LaTeX: pdfLaTeX
 
 BuildType: Website
+WebsitePath: /Users/xgao/Documents/GitHub/Sleep-Sufficiency-Factor-Analysis
