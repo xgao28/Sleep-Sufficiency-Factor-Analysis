@@ -1,5 +1,5 @@
 ---
-title: "JSC370 Lab12"
+title: "Sleep Sufficiency Factor Analysis"
 author: "Xinxiang Gao"
 output: 
     html_document:
@@ -26,90 +26,106 @@ knitr::opts_chunk$set(
   class.source = "code-r")
 ```
 
-This is my JSC370 lab 12 website.
+This is the website for Sleep Sufficiency Factor Analysis.
 
-```{r load-data}
-source("process_starbucks_data.R")
+```{r load-data, echo = FALSE}
+source("data_process.R")
 ```
 
 ```{r plot1, class.source="code-r-small"}
-set_map_details <- list(
-  scope = 'usa',
-  projection = list(type = 'albers usa'),
-  showlakes = TRUE,
-  lakecolor = toRGB('steelblue')
-)
-
-# Make sure both maps are on the same color scale
-shadeLimit <- 125
-
-# Create hover text
-sb_locs_state$hover <-
-  with(
-    sb_locs_state,
-    paste(
-      "Number of Starbucks: ",
-      n_stores,
-      '<br>',
-      "State: ",
-      state.y,
-      '<br>',
-      "Population: ",
-      population
-    )
-  )
-
-# Create the map
-map1 <- plot_geo(sb_locs_state, locationmode = "USA-states") %>%
-  add_trace(
-    z =  ~ n_stores,
-    text =  ~ hover,
-    locations =  ~ state,
-    color =  ~ n_stores,
-    colors = "Purples"
-  ) %>%
-  layout(title = "Starbucks stores by state", geo = set_map_details)
-
-map2 <- plot_geo(sb_locs_state, locationmode = "USA-states") %>%
-  add_trace(
-    z = ~ population,
-    locations = ~ state,
-    text = ~ hover,
-    color = ~ population,
-    colors = 'Reds'
-  ) %>%
-  colorbar(title = "Population") %>%
-  layout(title = "Population by State", geo = set_map_details)
-
-p1 <- subplot(map1, map2)
+sleep_duration_plot <- plot_ly(slq_p_m) %>% 
+  add_histogram(x = ~SLD012, name = "Weekday", alpha = 0.6, nbinsx = 22) %>% 
+  add_histogram(x = ~SLD013, name = "Weekend", alpha = 0.6, nbinsx = 22) %>% 
+  layout(title = "Sleep duration of Weekdays and Weekends",
+    xaxis = list(title = "Sleep Duration"), 
+         yaxis = list(title = "Frequency"),
+         barmode = "overlay",
+    hovermode = "compare")
 ```
 
 ```{r plot2, echo=FALSE}
-p2 <- sb_nutr %>%
-  unnest_tokens(word, Item, token = "words") %>%
-  filter(word %in% topwords$word) %>%
-  plot_ly(
-    x =  ~ Calories,
-    y =  ~ `Carb. (g)`,
-    z =  ~ `Protein (g)`,
-    type = "scatter3d",
-    mode = "markers",
-    color =  ~ word
+plotly_p7 <- plot_ly(all_p_mr_plot, x = ~duration_avg, 
+                     color = ~education_level, 
+                     type = "violin", alpha = 0.6) %>%
+  layout(
+    title = "Average sleep duration by Education",
+    xaxis = list(title = "Average sleep duration"),
+    yaxis = list(title = "Education"),
+    barmode = "overlay",
+    hovermode = "closest",
+    legend = list(orientation = "h", y = -0.2, x = -0.3)
   )
+
+
 ```
+
+## Abstract {.tabset}
+
+This study investigates the factors associated with sufficient sleep duration among adults using data from the National Health and Nutrition Examination Survey (NHANES). Through rigorous data retrieval, preprocessing, and modeling techniques, significant predictors of adequate sleep are identified, including demographic characteristics, mental health indicators, and sleep-related behaviors. Findings reveal that gender, education level, age, depression score, and frequency of feeling sleepy during the day are significant determinants of sufficient sleep duration. Males, individuals with lower education levels, and those with higher depression scores are less likely to obtain sufficient sleep, while older individuals and those who frequently feel sleepy during the day face challenges in achieving adequate rest. Despite comprehensive analysis, limitations associated with self-report data, such as recall bias and social desirability bias, are acknowledged, highlighting the need for future research incorporating objective measures of sleep to enhance validity and reliability. Overall, this study underscores the importance of understanding the multifaceted nature of factors influencing sleep duration among adults and informs targeted interventions to improve sleep hygiene and overall well-being.
+
+The paper is available at report link or \href{https://github.com/xgao28/Sleep-Sufficiency-Factor-Analysis/blob/main/paper/Sleep_Sufficiency_Factor_Analysis.pdf}{here}.
 
 ## Showcasing plots {.tabset}
 
-### Figure 1
+### Sleep duration
 
 ```{r p1, echo=FALSE}
-p1
+sleep_duration_plot
 ```
 
-### Figure 2
+It shows that sleep duration tends to be slightly higher on weekends compared to weekdays. This pattern suggests a prevalence of obtaining more sleep on Saturdays and Sundays. This insight underscores the potential impact of weekday schedules on sleep patterns and the importance of weekend rest in achieving adequate sleep duration.
+
+### Average sleep duration by Education
 
 ```{r p2, echo=FALSE}
-p2
+plotly_p7
 ```
 
 
+### Snore Frequency by Trouble Sleeping
+
+```{r}
+order_snore_freq <- c("Never", 
+                      "Rarely - 1-2 nights a week",
+                      "Occasionally - 3-4 nights a week",
+                      "Frequently - 5 or more nights a week")
+snore_trouble_sleeping <- all_p_mr %>%
+  group_by(if_trouble_sleeping, snore_freq) %>%
+  summarise(count = n()) %>%
+  mutate(if_trouble_sleeping = factor(if_trouble_sleeping, levels = c("No", "Yes"))) %>%
+  mutate(snore_freq = factor(snore_freq, levels = order_snore_freq))
+
+# Create grouped bar plots
+grouped_bar_plot_1 <- ggplot(snore_trouble_sleeping, aes(x = snore_freq, y = count, fill = if_trouble_sleeping)) +
+  geom_bar(stat = "identity", position = "fill") +
+  labs(title = "Ratio of Snore Frequency by Trouble Sleeping",
+       x = "Snore Frequency",
+       y = "Ratio",
+       fill = "Trouble Sleeping") +
+  theme(legend.position = "bottom")+ 
+  coord_flip()
+
+grouped_bar_plot_2 <- ggplot(snore_trouble_sleeping, aes(x = snore_freq, y = count, fill = if_trouble_sleeping)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Distribution of Snore Frequency by Trouble Sleeping",
+       x = "Snore Frequency",
+       y = "Count",
+       fill = "Trouble Sleeping") +
+  theme(legend.position = "bottom") +
+  coord_flip()
+
+ggplotly(grouped_bar_plot_2)
+
+```
+
+As shown in Distribution of Snore Frequency by Trouble Sleeping, it is difficult to observe the pattern between snore frequency levels and if they have trouble sleeping.
+
+As it turns out, with the utilization of a 100% stacked bar plot to normalize the count and express the ratio of counts instead of explicit counts, we are much easier to observe a pattern.
+
+```{r}
+ggplotly(grouped_bar_plot_1)
+```
+
+The data suggests that, across all levels of snore frequency, a greater proportion of participants who snore frequently reported experiencing trouble sleeping compared to those who snore less often.
+
+In general, it allows for a more straightforward comparison of the distribution of categories across different groups, as it removes the influence of the total count or frequency from the visual comparison.

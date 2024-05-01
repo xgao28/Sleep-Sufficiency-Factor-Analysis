@@ -1,0 +1,196 @@
+---
+title: "Data statistics"
+author: "Xinxiang Gao"
+output: 
+    html_document:
+        toc: TRUE
+        toc_float: TRUE
+---
+```{r setup, message=FALSE, echo=FALSE, warning=FALSE}
+library(tidyverse)
+library(plotly)
+library(widgetframe)
+library(tidytext)
+
+# INITALIZE CODE CHUNK OPTIONS
+knitr::opts_chunk$set(
+  warning = FALSE,
+  message = FALSE,
+  eval=TRUE,
+  echo = FALSE,
+  cache = TRUE,
+  fig.width = 7, 
+  fig.align = 'center',
+  fig.asp = 0.618,
+  out.width = "700px",
+  class.source = "code-r")
+```
+
+```{r}
+source("data_process.R")
+```
+
+Here are some statistics for the final dataset.
+
+## Sample Distribution {.tabset}
+
+```{r}
+plt <- function(col, name){
+    ggplotly(ggplot(all_p_mr, aes_string(x = col, fill = col)) +
+      geom_bar() +
+      labs(title = paste("Bar plot of", name)) +
+      coord_flip()) %>% 
+    layout(legend = list(orientation = "h", y = -0.2, x = -0.3))
+  }
+```
+
+### Gender
+
+```{r}
+plt("gender", "gender")
+```
+
+### Education Level
+```{r}
+plt("education_level", "education")
+```
+
+### Age
+
+```{r}
+plt("age", "age")
+```
+
+### Snore Frequency
+
+```{r}
+plt("snore_freq", "snore frequency")
+```
+
+### Feel sleepy frequency
+
+```{r}
+plt("feel_sleepy_freq", "feel sleepy frequency")
+```
+
+### Whether the sleep duration is sufficient
+
+```{r}
+plt("if_enough_sleep", "Whether the sleep duration is sufficient")
+```
+
+### Depression screening score
+
+```{r}
+plt("depression_score", "depression score")
+```
+
+
+
+
+### Drink frequency last year
+
+```{r}
+plt("drink_freq_last_year", "drink frequency last year")
+```
+
+### 4-5 Drinks frequency
+
+```{r}
+plt("more_drink_freq", "4-5 Drinks frequency")
+```
+
+### Number of times having 4-5 drinks in the last 30 days
+
+```{r}
+plt("more_drink_30days", "4-5 drinks in the last 30 days")
+```
+
+
+## Distribution of whether sufficient sleep respect to important factors {.tabset}
+
+
+### Age
+
+```{r}
+p3 <- ggplot(all_p_mr, aes(x=age, fill = if_enough_sleep)) +
+  geom_histogram(position = "fill")
+
+ggplotly(p3) %>% 
+  layout(barmode = "overlay",
+    hovermode = "compare")
+```
+
+
+### Depression score
+
+```{r}
+p4 <- ggplot(all_p_mr, aes(x=depression_score, fill = if_enough_sleep)) +
+  geom_histogram(position = "fill") + 
+  labs(title = "Proportion of Adequate Sleep by depression score",
+       x = "Score",
+       y = "Proportion")
+dep_by_age_plot <- ggplotly(p4) %>% 
+  layout(barmode = "overlay",
+    hovermode = "compare")
+ggplotly(dep_by_age_plot)
+```
+
+Note that a small number of participants are having a high depression screening score, which explains the chaotic ratio of the distribution whether getting enough sleep.
+
+### Gender
+
+```{r}
+p5 <- ggplot(all_p_mr, aes(x=gender, fill = if_enough_sleep)) +
+  geom_bar(position = "fill") +
+  labs(title = "Proportion of Adequate Sleep by Gender",
+       x = "Gender",
+       y = "Proportion") +
+  theme_minimal() +  # Example theme, change as needed
+  theme(legend.position = "bottom")  # Adjust legend position
+ggplotly(p5) %>% 
+  layout(barmode = "overlay",
+    hovermode = "compare")
+```
+
+
+### How often feeling sleepy
+
+```{r}
+p6 <- ggplot(all_p_mr, aes(x=feel_sleepy_freq, fill = if_enough_sleep)) +
+  geom_bar(position = "fill") +
+  labs(title = "Proportion of Adequate Sleep by Sleep feeling",
+       x = "Feeling sleepy frequency",
+       y = "Proportion") +
+  coord_flip()+
+  theme(legend.position = "bottom")  # Adjust legend position
+ggplotly(p6) %>% 
+  layout(barmode = "overlay",
+    hovermode = "compare")
+```
+
+
+### whether having trouble sleeping
+
+```{r}
+p7 <- ggplot(all_p_mr, aes(x=if_trouble_sleeping, fill = if_enough_sleep)) +
+  geom_bar(position = "fill") + 
+  labs(title = "Proportion of Adequate Sleep by whether having trouble sleeping",
+       x = "If have trouble sleeping",
+       y = "Proportion")
+plotly_p7 <- ggplotly(p7) %>% 
+  layout(barmode = "overlay",
+    hovermode = "compare")
+ggplotly(plotly_p7)
+```
+
+
+
+
+## Table {.tabset}
+
+```{r}
+skim(all_p_mr)
+```
+
+

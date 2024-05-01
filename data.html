@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Xinxiang Gao" />
+
+
+<title>Data statistics</title>
+
+<script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="site_libs/plotly-binding-4.10.4/plotly.js"></script>
+<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="site_libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet" />
+<script src="site_libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
+<link href="site_libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="site_libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Sleep Sufficiency Factor Analysis</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="data.html">Data</a>
+</li>
+<li>
+  <a href="model.html">Model</a>
+</li>
+<li>
+  <a href="https://github.com/xgao28/Sleep-Sufficiency-Factor-Analysis/blob/main/paper/Sleep_Sufficiency_Factor_Analysis.pdf">Report link</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/xgao28">My account</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Data statistics</h1>
+<h4 class="author">Xinxiang Gao</h4>
+
+</div>
+
+
+<p>Here are some statistics for the final dataset.</p>
+<div id="sample-distribution" class="section level2 tabset">
+<h2 class="tabset">Sample Distribution</h2>
+<div id="gender" class="section level3">
+<h3>Gender</h3>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-80694aa782a8f56c035e" style="width:700px;height:415.296px;"></div>
+<script type="application/json" data-for="htmlwidget-80694aa782a8f56c035e">{"x":{"data":[{"orientation":"h","width":0.89999999999999991,"base":0,"x":[1822],"y":[1],"text":"count: 1822<br />gender: Female<br />gender: Female","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Female","legendgroup":"Female","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000013,"base":0,"x":[1782],"y":[2],"text":"count: 1782<br />gender: Male<br />gender: Male","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Male","legendgroup":"Male","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":45.356149606182861,"r":7.3059360730593621,"b":41.776240930383779,"l":60.639269406392714},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Bar plot of gender","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-91.100000000000009,1913.0999999999999],"tickmode":"array","ticktext":["0","500","1000","1500"],"tickvals":[0,500,999.99999999999989,1500],"categoryorder":"array","categoryarray":["0","500","1000","1500"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716894984},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"count","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,2.6000000000000001],"tickmode":"array","ticktext":["Female","Male"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["Female","Male"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"gender","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716894984},"title":{"text":"gender","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"orientation":"h","y":-0.20000000000000001,"x":-0.29999999999999999},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"bad3293e954f":{"fill":{},"x":{},"type":"bar"}},"cur_data":"bad3293e954f","visdat":{"bad3293e954f":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="education-level" class="section level3">
+<h3>Education Level</h3>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-854a1606e307a31c5557" style="width:700px;height:415.296px;"></div>
+<script type="application/json" data-for="htmlwidget-854a1606e307a31c5557">{"x":{"data":[{"orientation":"h","width":0.89999999999999991,"base":0,"x":[317],"y":[1],"text":"count:  317<br />education_level: 9-11th grade (Includes 12th grade with no diploma)<br />education_level: 9-11th grade (Includes 12th grade with no diploma)","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"9-11th grade (Includes 12th grade with no diploma)","legendgroup":"9-11th grade (Includes 12th grade with no diploma)","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000013,"base":0,"x":[981],"y":[2],"text":"count:  981<br />education_level: College graduate or above<br />education_level: College graduate or above","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(163,165,0,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"College graduate or above","legendgroup":"College graduate or above","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000036,"base":0,"x":[820],"y":[3],"text":"count:  820<br />education_level: High school graduate/GED or equivalent<br />education_level: High school graduate/GED or equivalent","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,191,125,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"High school graduate/GED or equivalent","legendgroup":"High school graduate/GED or equivalent","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000036,"base":0,"x":[142],"y":[4],"text":"count:  142<br />education_level: Less than 9th grade<br />education_level: Less than 9th grade","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,176,246,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Less than 9th grade","legendgroup":"Less than 9th grade","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000036,"base":0,"x":[1344],"y":[5],"text":"count: 1344<br />education_level: Some college or AA degree<br />education_level: Some college or AA degree","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(231,107,243,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Some college or AA degree","legendgroup":"Some college or AA degree","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":45.356149606182861,"r":7.3059360730593621,"b":41.776240930383779,"l":317.80821917808231},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Bar plot of education","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-67.200000000000003,1411.2],"tickmode":"array","ticktext":["0","500","1000"],"tickvals":[0,500.00000000000006,1000],"categoryorder":"array","categoryarray":["0","500","1000"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716894984},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"count","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,5.5999999999999996],"tickmode":"array","ticktext":["9-11th grade (Includes 12th grade with no diploma)","College graduate or above","High school graduate/GED or equivalent","Less than 9th grade","Some college or AA degree"],"tickvals":[1,2,3,4,5],"categoryorder":"array","categoryarray":["9-11th grade (Includes 12th grade with no diploma)","College graduate or above","High school graduate/GED or equivalent","Less than 9th grade","Some college or AA degree"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"education_level","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716894984},"title":{"text":"education_level","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"orientation":"h","y":-0.20000000000000001,"x":-0.29999999999999999},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"bad33d09e508":{"fill":{},"x":{},"type":"bar"}},"cur_data":"bad33d09e508","visdat":{"bad33d09e508":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="age" class="section level3">
+<h3>Age</h3>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-d61b956697beeed05971" style="width:700px;height:415.296px;"></div>
+<script type="application/json" data-for="htmlwidget-d61b956697beeed05971">{"x":{"data":[{"orientation":"h","width":[0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.90000000000000213,0.90000000000000568,0.90000000000000568,0.90000000000000568,0.90000000000000568,0.90000000000000568,0.90000000000000568,0.90000000000000568,0.90000000000000568,0.90000000000000568,0.90000000000000568,0.90000000000000568,0.90000000000000568,0.90000000000000568,0.90000000000000568,0.90000000000000568,0.90000000000000568,0.90000000000000568,0.90000000000000568,0.90000000000000568,0.90000000000000568,0.90000000000000568,0.90000000000000568,0.90000000000000568,0.90000000000000568,0.90000000000000568,0.90000000000000568,0.90000000000000568,0.90000000000000568],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[74,90,101,104,90,91,83,84,99,97,87,89,98,106,97,73,86,78,82,83,91,96,93,93,75,84,80,92,94,74,85,62,78,70,87,115,102,77,61,78,125],"y":[20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60],"text":["count:  74<br />age: grey35<br />age: 20","count:  90<br />age: grey35<br />age: 21","count: 101<br />age: grey35<br />age: 22","count: 104<br />age: grey35<br />age: 23","count:  90<br />age: grey35<br />age: 24","count:  91<br />age: grey35<br />age: 25","count:  83<br />age: grey35<br />age: 26","count:  84<br />age: grey35<br />age: 27","count:  99<br />age: grey35<br />age: 28","count:  97<br />age: grey35<br />age: 29","count:  87<br />age: grey35<br />age: 30","count:  89<br />age: grey35<br />age: 31","count:  98<br />age: grey35<br />age: 32","count: 106<br />age: grey35<br />age: 33","count:  97<br />age: grey35<br />age: 34","count:  73<br />age: grey35<br />age: 35","count:  86<br />age: grey35<br />age: 36","count:  78<br />age: grey35<br />age: 37","count:  82<br />age: grey35<br />age: 38","count:  83<br />age: grey35<br />age: 39","count:  91<br />age: grey35<br />age: 40","count:  96<br />age: grey35<br />age: 41","count:  93<br />age: grey35<br />age: 42","count:  93<br />age: grey35<br />age: 43","count:  75<br />age: grey35<br />age: 44","count:  84<br />age: grey35<br />age: 45","count:  80<br />age: grey35<br />age: 46","count:  92<br />age: grey35<br />age: 47","count:  94<br />age: grey35<br />age: 48","count:  74<br />age: grey35<br />age: 49","count:  85<br />age: grey35<br />age: 50","count:  62<br />age: grey35<br />age: 51","count:  78<br />age: grey35<br />age: 52","count:  70<br />age: grey35<br />age: 53","count:  87<br />age: grey35<br />age: 54","count: 115<br />age: grey35<br />age: 55","count: 102<br />age: grey35<br />age: 56","count:  77<br />age: grey35<br />age: 57","count:  61<br />age: grey35<br />age: 58","count:  78<br />age: grey35<br />age: 59","count: 125<br />age: grey35<br />age: 60"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(89,89,89,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":45.356149606182861,"r":7.3059360730593621,"b":41.776240930383779,"l":37.260273972602747},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Bar plot of age","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-6.25,131.25],"tickmode":"array","ticktext":["0","40","80","120"],"tickvals":[0,40,80,120],"categoryorder":"array","categoryarray":["0","40","80","120"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716894984},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"count","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[17.504999999999999,62.495000000000005],"tickmode":"array","ticktext":["20","30","40","50","60"],"tickvals":[20,30,40,50,60],"categoryorder":"array","categoryarray":["20","30","40","50","60"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"age","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716894984},"title":{"text":"","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"orientation":"h","y":-0.20000000000000001,"x":-0.29999999999999999},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"bad35502c4e2":{"fill":{},"x":{},"type":"bar"}},"cur_data":"bad35502c4e2","visdat":{"bad35502c4e2":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="snore-frequency" class="section level3">
+<h3>Snore Frequency</h3>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-703ee5764dc5632870ed" style="width:700px;height:415.296px;"></div>
+<script type="application/json" data-for="htmlwidget-703ee5764dc5632870ed">{"x":{"data":[{"orientation":"h","width":0.89999999999999991,"base":0,"x":[1037],"y":[1],"text":"count: 1037<br />snore_freq: Frequently - 5 or more nights a week<br />snore_freq: Frequently - 5 or more nights a week","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Frequently - 5 or more nights a week","legendgroup":"Frequently - 5 or more nights a week","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000013,"base":0,"x":[888],"y":[2],"text":"count:  888<br />snore_freq: Never<br />snore_freq: Never","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(124,174,0,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Never","legendgroup":"Never","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000036,"base":0,"x":[663],"y":[3],"text":"count:  663<br />snore_freq: Occasionally - 3-4 nights a week<br />snore_freq: Occasionally - 3-4 nights a week","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Occasionally - 3-4 nights a week","legendgroup":"Occasionally - 3-4 nights a week","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000036,"base":0,"x":[1016],"y":[4],"text":"count: 1016<br />snore_freq: Rarely - 1-2 nights a week<br />snore_freq: Rarely - 1-2 nights a week","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(199,124,255,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Rarely - 1-2 nights a week","legendgroup":"Rarely - 1-2 nights a week","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":45.356149606182861,"r":7.3059360730593621,"b":41.776240930383779,"l":235.98173515981739},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Bar plot of snore frequency","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-51.850000000000001,1088.8499999999999],"tickmode":"array","ticktext":["0","250","500","750","1000"],"tickvals":[0,250.00000000000003,500,750,999.99999999999989],"categoryorder":"array","categoryarray":["0","250","500","750","1000"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716894984},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"count","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,4.5999999999999996],"tickmode":"array","ticktext":["Frequently - 5 or more nights a week","Never","Occasionally - 3-4 nights a week","Rarely - 1-2 nights a week"],"tickvals":[1,2,3,4],"categoryorder":"array","categoryarray":["Frequently - 5 or more nights a week","Never","Occasionally - 3-4 nights a week","Rarely - 1-2 nights a week"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"snore_freq","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716894984},"title":{"text":"snore_freq","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"orientation":"h","y":-0.20000000000000001,"x":-0.29999999999999999},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"bad322766449":{"fill":{},"x":{},"type":"bar"}},"cur_data":"bad322766449","visdat":{"bad322766449":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="feel-sleepy-frequency" class="section level3">
+<h3>Feel sleepy frequency</h3>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-2c781a22718d9757147b" style="width:700px;height:415.296px;"></div>
+<script type="application/json" data-for="htmlwidget-2c781a22718d9757147b">{"x":{"data":[{"orientation":"h","width":0.89999999999999991,"base":0,"x":[289],"y":[1],"text":"count:  289<br />feel_sleepy_freq: Almost always - 16-30 times a month<br />feel_sleepy_freq: Almost always - 16-30 times a month","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Almost always - 16-30 times a month","legendgroup":"Almost always - 16-30 times a month","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000013,"base":0,"x":[481],"y":[2],"text":"count:  481<br />feel_sleepy_freq: Never<br />feel_sleepy_freq: Never","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(163,165,0,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Never","legendgroup":"Never","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000036,"base":0,"x":[691],"y":[3],"text":"count:  691<br />feel_sleepy_freq: Often- 5-15 times a month<br />feel_sleepy_freq: Often- 5-15 times a month","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,191,125,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Often- 5-15 times a month","legendgroup":"Often- 5-15 times a month","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000036,"base":0,"x":[866],"y":[4],"text":"count:  866<br />feel_sleepy_freq: Rarely - 1 time a month<br />feel_sleepy_freq: Rarely - 1 time a month","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,176,246,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Rarely - 1 time a month","legendgroup":"Rarely - 1 time a month","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000036,"base":0,"x":[1277],"y":[5],"text":"count: 1277<br />feel_sleepy_freq: Sometimes - 2-4 times a month<br />feel_sleepy_freq: Sometimes - 2-4 times a month","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(231,107,243,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Sometimes - 2-4 times a month","legendgroup":"Sometimes - 2-4 times a month","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":45.356149606182861,"r":7.3059360730593621,"b":41.776240930383779,"l":230.13698630136992},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Bar plot of feel sleepy frequency","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-63.850000000000001,1340.8499999999999],"tickmode":"array","ticktext":["0","500","1000"],"tickvals":[0,500,999.99999999999989],"categoryorder":"array","categoryarray":["0","500","1000"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716894984},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"count","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,5.5999999999999996],"tickmode":"array","ticktext":["Almost always - 16-30 times a month","Never","Often- 5-15 times a month","Rarely - 1 time a month","Sometimes - 2-4 times a month"],"tickvals":[1,2,3,4,5],"categoryorder":"array","categoryarray":["Almost always - 16-30 times a month","Never","Often- 5-15 times a month","Rarely - 1 time a month","Sometimes - 2-4 times a month"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"feel_sleepy_freq","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716894984},"title":{"text":"feel_sleepy_freq","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"orientation":"h","y":-0.20000000000000001,"x":-0.29999999999999999},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"bad3358b441b":{"fill":{},"x":{},"type":"bar"}},"cur_data":"bad3358b441b","visdat":{"bad3358b441b":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="whether-the-sleep-duration-is-sufficient"
+class="section level3">
+<h3>Whether the sleep duration is sufficient</h3>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-3db5f0ffeb5fe94a55bf" style="width:700px;height:415.296px;"></div>
+<script type="application/json" data-for="htmlwidget-3db5f0ffeb5fe94a55bf">{"x":{"data":[{"orientation":"h","width":0.89999999999999991,"base":0,"x":[920],"y":[1],"text":"count:  920<br />if_enough_sleep: FALSE<br />if_enough_sleep: FALSE","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"FALSE","legendgroup":"FALSE","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000013,"base":0,"x":[2684],"y":[2],"text":"count: 2684<br />if_enough_sleep: TRUE<br />if_enough_sleep: TRUE","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"TRUE","legendgroup":"TRUE","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":45.356149606182861,"r":7.3059360730593621,"b":41.776240930383779,"l":54.794520547945211},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Bar plot of Whether the sleep duration is sufficient","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-134.20000000000002,2818.1999999999998],"tickmode":"array","ticktext":["0","1000","2000"],"tickvals":[0,1000,1999.9999999999998],"categoryorder":"array","categoryarray":["0","1000","2000"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716894984},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"count","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,2.6000000000000001],"tickmode":"array","ticktext":["FALSE","TRUE"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["FALSE","TRUE"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"if_enough_sleep","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716894984},"title":{"text":"if_enough_sleep","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"orientation":"h","y":-0.20000000000000001,"x":-0.29999999999999999},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"bad32db0474f":{"fill":{},"x":{},"type":"bar"}},"cur_data":"bad32db0474f","visdat":{"bad32db0474f":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="depression-screening-score" class="section level3">
+<h3>Depression screening score</h3>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-b531f5dab80b1d613fe7" style="width:700px;height:415.296px;"></div>
+<script type="application/json" data-for="htmlwidget-b531f5dab80b1d613fe7">{"x":{"data":[{"orientation":"h","width":[0.90000000000000002,0.89999999999999991,0.90000000000000013,0.90000000000000036,0.90000000000000036,0.90000000000000036,0.90000000000000036,0.90000000000000036,0.89999999999999947,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[1106,467,428,337,269,194,126,121,107,76,63,45,46,43,35,29,18,15,15,18,5,8,7,8,8,3,1,2,2,2],"y":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29],"text":["count: 1106<br />depression_score: grey35<br />depression_score:  0","count:  467<br />depression_score: grey35<br />depression_score:  1","count:  428<br />depression_score: grey35<br />depression_score:  2","count:  337<br />depression_score: grey35<br />depression_score:  3","count:  269<br />depression_score: grey35<br />depression_score:  4","count:  194<br />depression_score: grey35<br />depression_score:  5","count:  126<br />depression_score: grey35<br />depression_score:  6","count:  121<br />depression_score: grey35<br />depression_score:  7","count:  107<br />depression_score: grey35<br />depression_score:  8","count:   76<br />depression_score: grey35<br />depression_score:  9","count:   63<br />depression_score: grey35<br />depression_score: 10","count:   45<br />depression_score: grey35<br />depression_score: 11","count:   46<br />depression_score: grey35<br />depression_score: 12","count:   43<br />depression_score: grey35<br />depression_score: 13","count:   35<br />depression_score: grey35<br />depression_score: 14","count:   29<br />depression_score: grey35<br />depression_score: 15","count:   18<br />depression_score: grey35<br />depression_score: 16","count:   15<br />depression_score: grey35<br />depression_score: 17","count:   15<br />depression_score: grey35<br />depression_score: 18","count:   18<br />depression_score: grey35<br />depression_score: 19","count:    5<br />depression_score: grey35<br />depression_score: 20","count:    8<br />depression_score: grey35<br />depression_score: 21","count:    7<br />depression_score: grey35<br />depression_score: 22","count:    8<br />depression_score: grey35<br />depression_score: 23","count:    8<br />depression_score: grey35<br />depression_score: 24","count:    3<br />depression_score: grey35<br />depression_score: 25","count:    1<br />depression_score: grey35<br />depression_score: 26","count:    2<br />depression_score: grey35<br />depression_score: 27","count:    2<br />depression_score: grey35<br />depression_score: 28","count:    2<br />depression_score: grey35<br />depression_score: 29"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(89,89,89,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":45.356149606182861,"r":7.3059360730593621,"b":41.776240930383779,"l":37.260273972602747},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Bar plot of depression score","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-55.300000000000004,1161.3],"tickmode":"array","ticktext":["0","300","600","900"],"tickvals":[0,300,600,900],"categoryorder":"array","categoryarray":["0","300","600","900"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716894984},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"count","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-1.9450000000000001,30.945],"tickmode":"array","ticktext":["0","10","20","30"],"tickvals":[0,10,20,30],"categoryorder":"array","categoryarray":["0","10","20","30"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"depression_score","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716894984},"title":{"text":"","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"orientation":"h","y":-0.20000000000000001,"x":-0.29999999999999999},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"bad32812e6e2":{"fill":{},"x":{},"type":"bar"}},"cur_data":"bad32812e6e2","visdat":{"bad32812e6e2":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="drink-frequency-last-year" class="section level3">
+<h3>Drink frequency last year</h3>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-4fd84cbaedeb9a29ef42" style="width:700px;height:415.296px;"></div>
+<script type="application/json" data-for="htmlwidget-4fd84cbaedeb9a29ef42">{"x":{"data":[{"orientation":"h","width":0.89999999999999991,"base":0,"x":[452],"y":[1],"text":"count: 452<br />drink_freq_last_year: 1 to 2 times in the last year<br />drink_freq_last_year: 1 to 2 times in the last year","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"1 to 2 times in the last year","legendgroup":"1 to 2 times in the last year","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000013,"base":0,"x":[387],"y":[2],"text":"count: 387<br />drink_freq_last_year: 2 times a week<br />drink_freq_last_year: 2 times a week","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(216,144,0,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"2 times a week","legendgroup":"2 times a week","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000036,"base":0,"x":[690],"y":[3],"text":"count: 690<br />drink_freq_last_year: 2 to 3 times a month<br />drink_freq_last_year: 2 to 3 times a month","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(163,165,0,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"2 to 3 times a month","legendgroup":"2 to 3 times a month","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000036,"base":0,"x":[337],"y":[4],"text":"count: 337<br />drink_freq_last_year: 3 to 4 times a week<br />drink_freq_last_year: 3 to 4 times a week","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(57,182,0,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"3 to 4 times a week","legendgroup":"3 to 4 times a week","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000036,"base":0,"x":[471],"y":[5],"text":"count: 471<br />drink_freq_last_year: 3 to 6 times in the last year<br />drink_freq_last_year: 3 to 6 times in the last year","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,191,125,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"3 to 6 times in the last year","legendgroup":"3 to 6 times in the last year","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000036,"base":0,"x":[299],"y":[6],"text":"count: 299<br />drink_freq_last_year: 7 to 11 times in the last year<br />drink_freq_last_year: 7 to 11 times in the last year","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"7 to 11 times in the last year","legendgroup":"7 to 11 times in the last year","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000036,"base":0,"x":[121],"y":[7],"text":"count: 121<br />drink_freq_last_year: Every day<br />drink_freq_last_year: Every day","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,176,246,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Every day","legendgroup":"Every day","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.89999999999999947,"base":0,"x":[142],"y":[8],"text":"count: 142<br />drink_freq_last_year: Nearly every day<br />drink_freq_last_year: Nearly every day","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(149,144,255,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Nearly every day","legendgroup":"Nearly every day","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.89999999999999858,"base":0,"x":[352],"y":[9],"text":"count: 352<br />drink_freq_last_year: Once a month<br />drink_freq_last_year: Once a month","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(231,107,243,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Once a month","legendgroup":"Once a month","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.89999999999999858,"base":0,"x":[353],"y":[10],"text":"count: 353<br />drink_freq_last_year: Once a week<br />drink_freq_last_year: Once a week","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(255,98,188,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Once a week","legendgroup":"Once a week","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":45.356149606182861,"r":7.3059360730593621,"b":41.776240930383779,"l":200.91324200913246},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Bar plot of drink frequency last year","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-34.5,724.5],"tickmode":"array","ticktext":["0","200","400","600"],"tickvals":[0,199.99999999999997,400,600],"categoryorder":"array","categoryarray":["0","200","400","600"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716894984},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"count","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,10.6],"tickmode":"array","ticktext":["1 to 2 times in the last year","2 times a week","2 to 3 times a month","3 to 4 times a week","3 to 6 times in the last year","7 to 11 times in the last year","Every day","Nearly every day","Once a month","Once a week"],"tickvals":[1,2,3,4,5,6.0000000000000009,7,8,9,10],"categoryorder":"array","categoryarray":["1 to 2 times in the last year","2 times a week","2 to 3 times a month","3 to 4 times a week","3 to 6 times in the last year","7 to 11 times in the last year","Every day","Nearly every day","Once a month","Once a week"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"drink_freq_last_year","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716894984},"title":{"text":"drink_freq_last_year","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"orientation":"h","y":-0.20000000000000001,"x":-0.29999999999999999},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"bad37a17b83b":{"fill":{},"x":{},"type":"bar"}},"cur_data":"bad37a17b83b","visdat":{"bad37a17b83b":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="drinks-frequency" class="section level3">
+<h3>4-5 Drinks frequency</h3>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-094a2b7328bc21ce741e" style="width:700px;height:415.296px;"></div>
+<script type="application/json" data-for="htmlwidget-094a2b7328bc21ce741e">{"x":{"data":[{"orientation":"h","width":0.89999999999999991,"base":0,"x":[499],"y":[1],"text":"count:  499<br />more_drink_freq: 1 to 2 times in the last year<br />more_drink_freq: 1 to 2 times in the last year","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"1 to 2 times in the last year","legendgroup":"1 to 2 times in the last year","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000013,"base":0,"x":[129],"y":[2],"text":"count:  129<br />more_drink_freq: 2 times a week<br />more_drink_freq: 2 times a week","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(219,142,0,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"2 times a week","legendgroup":"2 times a week","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000036,"base":0,"x":[257],"y":[3],"text":"count:  257<br />more_drink_freq: 2 to 3 times a month<br />more_drink_freq: 2 to 3 times a month","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(174,162,0,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"2 to 3 times a month","legendgroup":"2 to 3 times a month","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000036,"base":0,"x":[83],"y":[4],"text":"count:   83<br />more_drink_freq: 3 to 4 times a week<br />more_drink_freq: 3 to 4 times a week","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(100,178,0,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"3 to 4 times a week","legendgroup":"3 to 4 times a week","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000036,"base":0,"x":[293],"y":[5],"text":"count:  293<br />more_drink_freq: 3 to 6 times in the last year<br />more_drink_freq: 3 to 6 times in the last year","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,189,92,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"3 to 6 times in the last year","legendgroup":"3 to 6 times in the last year","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000036,"base":0,"x":[125],"y":[6],"text":"count:  125<br />more_drink_freq: 7 to 11 times in the last year<br />more_drink_freq: 7 to 11 times in the last year","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,193,167,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"7 to 11 times in the last year","legendgroup":"7 to 11 times in the last year","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.90000000000000036,"base":0,"x":[37],"y":[7],"text":"count:   37<br />more_drink_freq: Every day<br />more_drink_freq: Every day","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,186,222,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Every day","legendgroup":"Every day","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.89999999999999947,"base":0,"x":[36],"y":[8],"text":"count:   36<br />more_drink_freq: Nearly every day<br />more_drink_freq: Nearly every day","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,166,255,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Nearly every day","legendgroup":"Nearly every day","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.89999999999999858,"base":0,"x":[1826],"y":[9],"text":"count: 1826<br />more_drink_freq: Never in the last year<br />more_drink_freq: Never in the last year","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(179,133,255,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Never in the last year","legendgroup":"Never in the last year","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.89999999999999858,"base":0,"x":[196],"y":[10],"text":"count:  196<br />more_drink_freq: Once a month<br />more_drink_freq: Once a month","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(239,103,235,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Once a month","legendgroup":"Once a month","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":0.89999999999999858,"base":0,"x":[123],"y":[11],"text":"count:  123<br />more_drink_freq: Once a week<br />more_drink_freq: Once a week","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(255,99,182,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Once a week","legendgroup":"Once a week","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":45.356149606182861,"r":7.3059360730593621,"b":41.776240930383779,"l":200.91324200913246},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Bar plot of 4-5 Drinks frequency","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-91.300000000000011,1917.3],"tickmode":"array","ticktext":["0","500","1000","1500"],"tickvals":[0,499.99999999999994,1000,1500],"categoryorder":"array","categoryarray":["0","500","1000","1500"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716894984},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"count","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,11.6],"tickmode":"array","ticktext":["1 to 2 times in the last year","2 times a week","2 to 3 times a month","3 to 4 times a week","3 to 6 times in the last year","7 to 11 times in the last year","Every day","Nearly every day","Never in the last year","Once a month","Once a week"],"tickvals":[1,2,3,4,5,6,7,8,9,10,11],"categoryorder":"array","categoryarray":["1 to 2 times in the last year","2 times a week","2 to 3 times a month","3 to 4 times a week","3 to 6 times in the last year","7 to 11 times in the last year","Every day","Nearly every day","Never in the last year","Once a month","Once a week"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"more_drink_freq","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716894984},"title":{"text":"more_drink_freq","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"orientation":"h","y":-0.20000000000000001,"x":-0.29999999999999999},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"bad37c3d6e4d":{"fill":{},"x":{},"type":"bar"}},"cur_data":"bad37c3d6e4d","visdat":{"bad37c3d6e4d":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="number-of-times-having-4-5-drinks-in-the-last-30-days"
+class="section level3">
+<h3>Number of times having 4-5 drinks in the last 30 days</h3>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-729bfaa2f8a4724cc0ca" style="width:700px;height:415.296px;"></div>
+<script type="application/json" data-for="htmlwidget-729bfaa2f8a4724cc0ca">{"x":{"data":[{"orientation":"h","width":[0.90000000000000002,0.89999999999999991,0.90000000000000013,0.90000000000000036,0.90000000000000036,0.90000000000000036,0.90000000000000036,0.90000000000000036,0.89999999999999947,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[2413,409,227,142,120,62,32,12,28,1,29,1,18,1,3,27,3,1,1,24,50],"y":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,18,19,20,30],"text":["count: 2413<br />more_drink_30days: grey35<br />more_drink_30days:  0","count:  409<br />more_drink_30days: grey35<br />more_drink_30days:  1","count:  227<br />more_drink_30days: grey35<br />more_drink_30days:  2","count:  142<br />more_drink_30days: grey35<br />more_drink_30days:  3","count:  120<br />more_drink_30days: grey35<br />more_drink_30days:  4","count:   62<br />more_drink_30days: grey35<br />more_drink_30days:  5","count:   32<br />more_drink_30days: grey35<br />more_drink_30days:  6","count:   12<br />more_drink_30days: grey35<br />more_drink_30days:  7","count:   28<br />more_drink_30days: grey35<br />more_drink_30days:  8","count:    1<br />more_drink_30days: grey35<br />more_drink_30days:  9","count:   29<br />more_drink_30days: grey35<br />more_drink_30days: 10","count:    1<br />more_drink_30days: grey35<br />more_drink_30days: 11","count:   18<br />more_drink_30days: grey35<br />more_drink_30days: 12","count:    1<br />more_drink_30days: grey35<br />more_drink_30days: 13","count:    3<br />more_drink_30days: grey35<br />more_drink_30days: 14","count:   27<br />more_drink_30days: grey35<br />more_drink_30days: 15","count:    3<br />more_drink_30days: grey35<br />more_drink_30days: 16","count:    1<br />more_drink_30days: grey35<br />more_drink_30days: 18","count:    1<br />more_drink_30days: grey35<br />more_drink_30days: 19","count:   24<br />more_drink_30days: grey35<br />more_drink_30days: 20","count:   50<br />more_drink_30days: grey35<br />more_drink_30days: 30"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(89,89,89,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":45.356149606182861,"r":7.3059360730593621,"b":41.776240930383779,"l":37.260273972602747},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Bar plot of 4-5 drinks in the last 30 days","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-120.65000000000001,2533.6500000000001],"tickmode":"array","ticktext":["0","500","1000","1500","2000","2500"],"tickvals":[0,500,1000.0000000000001,1500,2000,2500],"categoryorder":"array","categoryarray":["0","500","1000","1500","2000","2500"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716894984},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"count","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-1.9949999999999999,31.994999999999997],"tickmode":"array","ticktext":["0","10","20","30"],"tickvals":[0,10,20,30],"categoryorder":"array","categoryarray":["0","10","20","30"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"more_drink_30days","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716894984},"title":{"text":"","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"orientation":"h","y":-0.20000000000000001,"x":-0.29999999999999999},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"bad36aac4549":{"fill":{},"x":{},"type":"bar"}},"cur_data":"bad36aac4549","visdat":{"bad36aac4549":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div
+id="distribution-of-whether-sufficient-sleep-respect-to-important-factors"
+class="section level2 tabset">
+<h2 class="tabset">Distribution of whether sufficient sleep respect to
+important factors</h2>
+<div id="age-1" class="section level3">
+<h3>Age</h3>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-43f1df153bd9f851e210" style="width:700px;height:415.296px;"></div>
+<script type="application/json" data-for="htmlwidget-43f1df153bd9f851e210">{"x":{"data":[{"orientation":"v","width":[1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.379310344827573,1.3793103448275872,1.3793103448275872],"base":[0.77027027027027029,0.83333333333333337,0.84158415841584155,0.85567010309278346,0.73626373626373631,0.74698795180722888,0.79781420765027322,0.79381443298969068,0.72159090909090906,0.80612244897959184,0.71698113207547165,0.75294117647058822,0.7558139534883721,0.70512820512820518,0.73939393939393938,0.67032967032967028,0.71957671957671954,0.62365591397849462,0.76000000000000001,0.71341463414634143,0.79347826086956519,0.68085106382978722,0.72327044025157228,0.67741935483870963,0.77702702702702697,0.64367816091954022,0.71304347826086956,0.75418994413407825,0.85245901639344257,0.66009852216748766],"x":[19.31034482758621,20.689655172413794,22.068965517241381,23.448275862068968,24.827586206896555,26.206896551724142,27.58620689655173,28.965517241379313,30.3448275862069,31.724137931034484,33.103448275862071,34.482758620689658,35.862068965517246,37.241379310344826,38.620689655172413,40,41.379310344827587,42.758620689655174,44.137931034482762,45.517241379310349,46.896551724137936,48.275862068965523,49.65517241379311,51.034482758620697,52.413793103448285,53.793103448275872,55.172413793103459,56.551724137931039,57.931034482758619,59.310344827586206],"y":[0.22972972972972971,0.16666666666666663,0.15841584158415845,0.14432989690721654,0.26373626373626369,0.25301204819277112,0.20218579234972678,0.20618556701030932,0.27840909090909094,0.19387755102040816,0.28301886792452835,0.24705882352941178,0.2441860465116279,0.29487179487179482,0.26060606060606062,0.32967032967032972,0.28042328042328046,0.37634408602150538,0.23999999999999999,0.28658536585365857,0.20652173913043481,0.31914893617021278,0.27672955974842772,0.32258064516129037,0.22297297297297303,0.35632183908045978,0.28695652173913044,0.24581005586592175,0.14754098360655743,0.33990147783251234],"text":["count: 0.2297297<br />age: 19.31034<br />if_enough_sleep: FALSE","count: 0.1666667<br />age: 20.68966<br />if_enough_sleep: FALSE","count: 0.1584158<br />age: 22.06897<br />if_enough_sleep: FALSE","count: 0.1443299<br />age: 23.44828<br />if_enough_sleep: FALSE","count: 0.2637363<br />age: 24.82759<br />if_enough_sleep: FALSE","count: 0.2530120<br />age: 26.20690<br />if_enough_sleep: FALSE","count: 0.2021858<br />age: 27.58621<br />if_enough_sleep: FALSE","count: 0.2061856<br />age: 28.96552<br />if_enough_sleep: FALSE","count: 0.2784091<br />age: 30.34483<br />if_enough_sleep: FALSE","count: 0.1938776<br />age: 31.72414<br />if_enough_sleep: FALSE","count: 0.2830189<br />age: 33.10345<br />if_enough_sleep: FALSE","count: 0.2470588<br />age: 34.48276<br />if_enough_sleep: FALSE","count: 0.2441860<br />age: 35.86207<br />if_enough_sleep: FALSE","count: 0.2948718<br />age: 37.24138<br />if_enough_sleep: FALSE","count: 0.2606061<br />age: 38.62069<br />if_enough_sleep: FALSE","count: 0.3296703<br />age: 40.00000<br />if_enough_sleep: FALSE","count: 0.2804233<br />age: 41.37931<br />if_enough_sleep: FALSE","count: 0.3763441<br />age: 42.75862<br />if_enough_sleep: FALSE","count: 0.2400000<br />age: 44.13793<br />if_enough_sleep: FALSE","count: 0.2865854<br />age: 45.51724<br />if_enough_sleep: FALSE","count: 0.2065217<br />age: 46.89655<br />if_enough_sleep: FALSE","count: 0.3191489<br />age: 48.27586<br />if_enough_sleep: FALSE","count: 0.2767296<br />age: 49.65517<br />if_enough_sleep: FALSE","count: 0.3225806<br />age: 51.03448<br />if_enough_sleep: FALSE","count: 0.2229730<br />age: 52.41379<br />if_enough_sleep: FALSE","count: 0.3563218<br />age: 53.79310<br />if_enough_sleep: FALSE","count: 0.2869565<br />age: 55.17241<br />if_enough_sleep: FALSE","count: 0.2458101<br />age: 56.55172<br />if_enough_sleep: FALSE","count: 0.1475410<br />age: 57.93103<br />if_enough_sleep: FALSE","count: 0.3399015<br />age: 59.31034<br />if_enough_sleep: FALSE"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"FALSE","legendgroup":"FALSE","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.3793103448275872,1.379310344827573,1.3793103448275872,1.3793103448275872],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[19.31034482758621,20.689655172413794,22.068965517241381,23.448275862068968,24.827586206896555,26.206896551724142,27.58620689655173,28.965517241379313,30.3448275862069,31.724137931034484,33.103448275862071,34.482758620689658,35.862068965517246,37.241379310344826,38.620689655172413,40,41.379310344827587,42.758620689655174,44.137931034482762,45.517241379310349,46.896551724137936,48.275862068965523,49.65517241379311,51.034482758620697,52.413793103448285,53.793103448275872,55.172413793103459,56.551724137931039,57.931034482758619,59.310344827586206],"y":[0.77027027027027029,0.83333333333333337,0.84158415841584155,0.85567010309278346,0.73626373626373631,0.74698795180722888,0.79781420765027322,0.79381443298969068,0.72159090909090906,0.80612244897959184,0.71698113207547165,0.75294117647058822,0.7558139534883721,0.70512820512820518,0.73939393939393938,0.67032967032967028,0.71957671957671954,0.62365591397849462,0.76000000000000001,0.71341463414634143,0.79347826086956519,0.68085106382978722,0.72327044025157228,0.67741935483870963,0.77702702702702697,0.64367816091954022,0.71304347826086956,0.75418994413407825,0.85245901639344257,0.66009852216748766],"text":["count: 0.7702703<br />age: 19.31034<br />if_enough_sleep: TRUE","count: 0.8333333<br />age: 20.68966<br />if_enough_sleep: TRUE","count: 0.8415842<br />age: 22.06897<br />if_enough_sleep: TRUE","count: 0.8556701<br />age: 23.44828<br />if_enough_sleep: TRUE","count: 0.7362637<br />age: 24.82759<br />if_enough_sleep: TRUE","count: 0.7469880<br />age: 26.20690<br />if_enough_sleep: TRUE","count: 0.7978142<br />age: 27.58621<br />if_enough_sleep: TRUE","count: 0.7938144<br />age: 28.96552<br />if_enough_sleep: TRUE","count: 0.7215909<br />age: 30.34483<br />if_enough_sleep: TRUE","count: 0.8061224<br />age: 31.72414<br />if_enough_sleep: TRUE","count: 0.7169811<br />age: 33.10345<br />if_enough_sleep: TRUE","count: 0.7529412<br />age: 34.48276<br />if_enough_sleep: TRUE","count: 0.7558140<br />age: 35.86207<br />if_enough_sleep: TRUE","count: 0.7051282<br />age: 37.24138<br />if_enough_sleep: TRUE","count: 0.7393939<br />age: 38.62069<br />if_enough_sleep: TRUE","count: 0.6703297<br />age: 40.00000<br />if_enough_sleep: TRUE","count: 0.7195767<br />age: 41.37931<br />if_enough_sleep: TRUE","count: 0.6236559<br />age: 42.75862<br />if_enough_sleep: TRUE","count: 0.7600000<br />age: 44.13793<br />if_enough_sleep: TRUE","count: 0.7134146<br />age: 45.51724<br />if_enough_sleep: TRUE","count: 0.7934783<br />age: 46.89655<br />if_enough_sleep: TRUE","count: 0.6808511<br />age: 48.27586<br />if_enough_sleep: TRUE","count: 0.7232704<br />age: 49.65517<br />if_enough_sleep: TRUE","count: 0.6774194<br />age: 51.03448<br />if_enough_sleep: TRUE","count: 0.7770270<br />age: 52.41379<br />if_enough_sleep: TRUE","count: 0.6436782<br />age: 53.79310<br />if_enough_sleep: TRUE","count: 0.7130435<br />age: 55.17241<br />if_enough_sleep: TRUE","count: 0.7541899<br />age: 56.55172<br />if_enough_sleep: TRUE","count: 0.8524590<br />age: 57.93103<br />if_enough_sleep: TRUE","count: 0.6600985<br />age: 59.31034<br />if_enough_sleep: TRUE"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"TRUE","legendgroup":"TRUE","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":27.821903030840396,"r":7.3059360730593621,"b":41.776240930383779,"l":48.949771689497723},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[16.551724137931036,62.068965517241381],"tickmode":"array","ticktext":["20","30","40","50","60"],"tickvals":[20,30,40,50,60],"categoryorder":"array","categoryarray":["20","30","40","50","60"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716894984},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"age","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-0.050000000000000003,1.05],"tickmode":"array","ticktext":["0.00","0.25","0.50","0.75","1.00"],"tickvals":[0,0.25,0.5,0.75,1],"categoryorder":"array","categoryarray":["0.00","0.25","0.50","0.75","1.00"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"count","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716894984},"title":{"text":"if_enough_sleep","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"compare","barmode":"overlay"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"bad34b0cbb1c":{"x":{},"fill":{},"type":"bar"}},"cur_data":"bad34b0cbb1c","visdat":{"bad34b0cbb1c":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="depression-score" class="section level3">
+<h3>Depression score</h3>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-51bb9b6144170a036cf3" style="width:700px;height:415.296px;"></div>
+<script type="application/json" data-for="htmlwidget-51bb9b6144170a036cf3">{"x":{"data":[{"orientation":"v","width":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],"base":[0.77938517179023503,0.75802997858672372,0.75467289719626163,0.74777448071216612,0.71375464684014867,0.70618556701030932,0.75396825396825395,0.76033057851239672,0.69158878504672894,0.61842105263157898,0.7142857142857143,0.62222222222222223,0.63043478260869568,0.76744186046511631,0.74285714285714288,0.72413793103448276,0.77777777777777779,0.59999999999999998,0.80000000000000004,0.77777777777777779,0.40000000000000002,0.375,0.7142857142857143,0.75,0.5,0.33333333333333331,0,0.5,1,0.5],"x":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29],"y":[0.22061482820976497,0.24197002141327628,0.24532710280373837,0.25222551928783388,0.28624535315985133,0.29381443298969068,0.24603174603174605,0.23966942148760328,0.30841121495327106,0.38157894736842102,0.2857142857142857,0.37777777777777777,0.36956521739130432,0.23255813953488369,0.25714285714285712,0.27586206896551724,0.22222222222222221,0.40000000000000002,0.19999999999999996,0.22222222222222221,0.59999999999999998,0.625,0.2857142857142857,0.25,0.5,0.66666666666666674,1,0.5,0,0.5],"text":["count: 0.2206148<br />depression_score:  0<br />if_enough_sleep: FALSE","count: 0.2419700<br />depression_score:  1<br />if_enough_sleep: FALSE","count: 0.2453271<br />depression_score:  2<br />if_enough_sleep: FALSE","count: 0.2522255<br />depression_score:  3<br />if_enough_sleep: FALSE","count: 0.2862454<br />depression_score:  4<br />if_enough_sleep: FALSE","count: 0.2938144<br />depression_score:  5<br />if_enough_sleep: FALSE","count: 0.2460317<br />depression_score:  6<br />if_enough_sleep: FALSE","count: 0.2396694<br />depression_score:  7<br />if_enough_sleep: FALSE","count: 0.3084112<br />depression_score:  8<br />if_enough_sleep: FALSE","count: 0.3815789<br />depression_score:  9<br />if_enough_sleep: FALSE","count: 0.2857143<br />depression_score: 10<br />if_enough_sleep: FALSE","count: 0.3777778<br />depression_score: 11<br />if_enough_sleep: FALSE","count: 0.3695652<br />depression_score: 12<br />if_enough_sleep: FALSE","count: 0.2325581<br />depression_score: 13<br />if_enough_sleep: FALSE","count: 0.2571429<br />depression_score: 14<br />if_enough_sleep: FALSE","count: 0.2758621<br />depression_score: 15<br />if_enough_sleep: FALSE","count: 0.2222222<br />depression_score: 16<br />if_enough_sleep: FALSE","count: 0.4000000<br />depression_score: 17<br />if_enough_sleep: FALSE","count: 0.2000000<br />depression_score: 18<br />if_enough_sleep: FALSE","count: 0.2222222<br />depression_score: 19<br />if_enough_sleep: FALSE","count: 0.6000000<br />depression_score: 20<br />if_enough_sleep: FALSE","count: 0.6250000<br />depression_score: 21<br />if_enough_sleep: FALSE","count: 0.2857143<br />depression_score: 22<br />if_enough_sleep: FALSE","count: 0.2500000<br />depression_score: 23<br />if_enough_sleep: FALSE","count: 0.5000000<br />depression_score: 24<br />if_enough_sleep: FALSE","count: 0.6666667<br />depression_score: 25<br />if_enough_sleep: FALSE","count: 1.0000000<br />depression_score: 26<br />if_enough_sleep: FALSE","count: 0.5000000<br />depression_score: 27<br />if_enough_sleep: FALSE","count: 0.0000000<br />depression_score: 28<br />if_enough_sleep: FALSE","count: 0.5000000<br />depression_score: 29<br />if_enough_sleep: FALSE"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"FALSE","legendgroup":"FALSE","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29],"y":[0.77938517179023503,0.75802997858672372,0.75467289719626163,0.74777448071216612,0.71375464684014867,0.70618556701030932,0.75396825396825395,0.76033057851239672,0.69158878504672894,0.61842105263157898,0.7142857142857143,0.62222222222222223,0.63043478260869568,0.76744186046511631,0.74285714285714288,0.72413793103448276,0.77777777777777779,0.59999999999999998,0.80000000000000004,0.77777777777777779,0.40000000000000002,0.375,0.7142857142857143,0.75,0.5,0.33333333333333331,0,0.5,1,0.5],"text":["count: 0.7793852<br />depression_score:  0<br />if_enough_sleep: TRUE","count: 0.7580300<br />depression_score:  1<br />if_enough_sleep: TRUE","count: 0.7546729<br />depression_score:  2<br />if_enough_sleep: TRUE","count: 0.7477745<br />depression_score:  3<br />if_enough_sleep: TRUE","count: 0.7137546<br />depression_score:  4<br />if_enough_sleep: TRUE","count: 0.7061856<br />depression_score:  5<br />if_enough_sleep: TRUE","count: 0.7539683<br />depression_score:  6<br />if_enough_sleep: TRUE","count: 0.7603306<br />depression_score:  7<br />if_enough_sleep: TRUE","count: 0.6915888<br />depression_score:  8<br />if_enough_sleep: TRUE","count: 0.6184211<br />depression_score:  9<br />if_enough_sleep: TRUE","count: 0.7142857<br />depression_score: 10<br />if_enough_sleep: TRUE","count: 0.6222222<br />depression_score: 11<br />if_enough_sleep: TRUE","count: 0.6304348<br />depression_score: 12<br />if_enough_sleep: TRUE","count: 0.7674419<br />depression_score: 13<br />if_enough_sleep: TRUE","count: 0.7428571<br />depression_score: 14<br />if_enough_sleep: TRUE","count: 0.7241379<br />depression_score: 15<br />if_enough_sleep: TRUE","count: 0.7777778<br />depression_score: 16<br />if_enough_sleep: TRUE","count: 0.6000000<br />depression_score: 17<br />if_enough_sleep: TRUE","count: 0.8000000<br />depression_score: 18<br />if_enough_sleep: TRUE","count: 0.7777778<br />depression_score: 19<br />if_enough_sleep: TRUE","count: 0.4000000<br />depression_score: 20<br />if_enough_sleep: TRUE","count: 0.3750000<br />depression_score: 21<br />if_enough_sleep: TRUE","count: 0.7142857<br />depression_score: 22<br />if_enough_sleep: TRUE","count: 0.7500000<br />depression_score: 23<br />if_enough_sleep: TRUE","count: 0.5000000<br />depression_score: 24<br />if_enough_sleep: TRUE","count: 0.3333333<br />depression_score: 25<br />if_enough_sleep: TRUE","count: 0.0000000<br />depression_score: 26<br />if_enough_sleep: TRUE","count: 0.5000000<br />depression_score: 27<br />if_enough_sleep: TRUE","count: 1.0000000<br />depression_score: 28<br />if_enough_sleep: TRUE","count: 0.5000000<br />depression_score: 29<br />if_enough_sleep: TRUE"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"TRUE","legendgroup":"TRUE","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":45.356149606182861,"r":7.3059360730593621,"b":41.776240930383779,"l":48.949771689497723},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Proportion of Adequate Sleep by depression score","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-2,31],"tickmode":"array","ticktext":["0","10","20","30"],"tickvals":[0,10,20,30],"categoryorder":"array","categoryarray":["0","10","20","30"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716894984},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Score","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-0.050000000000000003,1.05],"tickmode":"array","ticktext":["0.00","0.25","0.50","0.75","1.00"],"tickvals":[0,0.25,0.5,0.75,1],"categoryorder":"array","categoryarray":["0.00","0.25","0.50","0.75","1.00"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Proportion","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716894984},"title":{"text":"if_enough_sleep","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"compare","barmode":"overlay"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"bad32e13ee83":{"x":{},"fill":{},"type":"bar"}},"cur_data":"bad32e13ee83","visdat":{"bad32e13ee83":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p>Note that a small number of participants are having a high depression
+screening score, which explains the chaotic ratio of the distribution
+whether getting enough sleep.</p>
+</div>
+<div id="gender-1" class="section level3">
+<h3>Gender</h3>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-95968542bd530a1c24be" style="width:700px;height:415.296px;"></div>
+<script type="application/json" data-for="htmlwidget-95968542bd530a1c24be">{"x":{"data":[{"orientation":"v","width":[0.89999999999999991,0.90000000000000013],"base":[0.79637760702524696,0.69191919191919193],"x":[1,2],"y":[0.20362239297475304,0.30808080808080807],"text":["count: 0.2036224<br />gender: Female<br />if_enough_sleep: FALSE","count: 0.3080808<br />gender: Male<br />if_enough_sleep: FALSE"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"FALSE","legendgroup":"FALSE","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.89999999999999991,0.90000000000000013],"base":[0,0],"x":[1,2],"y":[0.79637760702524696,0.69191919191919193],"text":["count: 0.7963776<br />gender: Female<br />if_enough_sleep: TRUE","count: 0.6919192<br />gender: Male<br />if_enough_sleep: TRUE"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"TRUE","legendgroup":"TRUE","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":45.356149606182861,"r":7.3059360730593621,"b":41.776240930383779,"l":48.949771689497723},"font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Proportion of Adequate Sleep by Gender","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,2.6000000000000001],"tickmode":"array","ticktext":["Female","Male"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["Female","Male"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716894984},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Gender","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-0.050000000000000003,1.05],"tickmode":"array","ticktext":["0.00","0.25","0.50","0.75","1.00"],"tickvals":[0,0.25,0.5,0.75,1],"categoryorder":"array","categoryarray":["0.00","0.25","0.50","0.75","1.00"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Proportion","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716894984},"title":{"text":"if_enough_sleep","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"compare","barmode":"overlay"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"bad364347a21":{"x":{},"fill":{},"type":"bar"}},"cur_data":"bad364347a21","visdat":{"bad364347a21":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="how-often-feeling-sleepy" class="section level3">
+<h3>How often feeling sleepy</h3>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-cf3b141ed9d50998071e" style="width:700px;height:415.296px;"></div>
+<script type="application/json" data-for="htmlwidget-cf3b141ed9d50998071e">{"x":{"data":[{"orientation":"h","width":[0.89999999999999991,0.90000000000000013,0.90000000000000036,0.90000000000000036,0.90000000000000036],"base":[0.59515570934256057,0.78170478170478175,0.69464544138929085,0.78406466512702078,0.76507439310884884],"x":[0.40484429065743943,0.21829521829521825,0.30535455861070915,0.21593533487297922,0.23492560689115116],"y":[1,2,3,4,5],"text":["count: 0.4048443<br />feel_sleepy_freq: Almost always - 16-30 times a month<br />if_enough_sleep: FALSE","count: 0.2182952<br />feel_sleepy_freq: Never<br />if_enough_sleep: FALSE","count: 0.3053546<br />feel_sleepy_freq: Often- 5-15 times a month<br />if_enough_sleep: FALSE","count: 0.2159353<br />feel_sleepy_freq: Rarely - 1 time a month<br />if_enough_sleep: FALSE","count: 0.2349256<br />feel_sleepy_freq: Sometimes - 2-4 times a month<br />if_enough_sleep: FALSE"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"FALSE","legendgroup":"FALSE","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":[0.89999999999999991,0.90000000000000013,0.90000000000000036,0.90000000000000036,0.90000000000000036],"base":[0,0,0,0,0],"x":[0.59515570934256057,0.78170478170478175,0.69464544138929085,0.78406466512702078,0.76507439310884884],"y":[1,2,3,4,5],"text":["count: 0.5951557<br />feel_sleepy_freq: Almost always - 16-30 times a month<br />if_enough_sleep: TRUE","count: 0.7817048<br />feel_sleepy_freq: Never<br />if_enough_sleep: TRUE","count: 0.6946454<br />feel_sleepy_freq: Often- 5-15 times a month<br />if_enough_sleep: TRUE","count: 0.7840647<br />feel_sleepy_freq: Rarely - 1 time a month<br />if_enough_sleep: TRUE","count: 0.7650744<br />feel_sleepy_freq: Sometimes - 2-4 times a month<br />if_enough_sleep: TRUE"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"TRUE","legendgroup":"TRUE","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":45.356149606182861,"r":7.3059360730593621,"b":41.776240930383779,"l":230.13698630136992},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Proportion of Adequate Sleep by Sleep feeling","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-0.050000000000000003,1.05],"tickmode":"array","ticktext":["0.00","0.25","0.50","0.75","1.00"],"tickvals":[0,0.25,0.5,0.75,1],"categoryorder":"array","categoryarray":["0.00","0.25","0.50","0.75","1.00"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716894984},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Proportion","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,5.5999999999999996],"tickmode":"array","ticktext":["Almost always - 16-30 times a month","Never","Often- 5-15 times a month","Rarely - 1 time a month","Sometimes - 2-4 times a month"],"tickvals":[1,2,3,4,5],"categoryorder":"array","categoryarray":["Almost always - 16-30 times a month","Never","Often- 5-15 times a month","Rarely - 1 time a month","Sometimes - 2-4 times a month"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Feeling sleepy frequency","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716894984},"title":{"text":"if_enough_sleep","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"compare","barmode":"overlay"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"bad367a0187b":{"x":{},"fill":{},"type":"bar"}},"cur_data":"bad367a0187b","visdat":{"bad367a0187b":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="whether-having-trouble-sleeping" class="section level3">
+<h3>whether having trouble sleeping</h3>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-bc556f5620d06760e278" style="width:700px;height:415.296px;"></div>
+<script type="application/json" data-for="htmlwidget-bc556f5620d06760e278">{"x":{"data":[{"orientation":"v","width":[0.89999999999999991,0.90000000000000013],"base":[0.7556990881458967,0.71502057613168724],"x":[1,2],"y":[0.2443009118541033,0.28497942386831276],"text":["count: 0.2443009<br />if_trouble_sleeping: No<br />if_enough_sleep: FALSE","count: 0.2849794<br />if_trouble_sleeping: Yes<br />if_enough_sleep: FALSE"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"FALSE","legendgroup":"FALSE","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.89999999999999991,0.90000000000000013],"base":[0,0],"x":[1,2],"y":[0.7556990881458967,0.71502057613168724],"text":["count: 0.7556991<br />if_trouble_sleeping: No<br />if_enough_sleep: TRUE","count: 0.7150206<br />if_trouble_sleeping: Yes<br />if_enough_sleep: TRUE"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"TRUE","legendgroup":"TRUE","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":45.356149606182861,"r":7.3059360730593621,"b":41.776240930383779,"l":48.949771689497723},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Proportion of Adequate Sleep by whether having trouble sleeping","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,2.6000000000000001],"tickmode":"array","ticktext":["No","Yes"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["No","Yes"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716894984},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"If have trouble sleeping","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-0.050000000000000003,1.05],"tickmode":"array","ticktext":["0.00","0.25","0.50","0.75","1.00"],"tickvals":[0,0.25,0.5,0.75,1],"categoryorder":"array","categoryarray":["0.00","0.25","0.50","0.75","1.00"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Proportion","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716894984},"title":{"text":"if_enough_sleep","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"compare","barmode":"overlay"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"bad35de7e581":{"x":{},"fill":{},"type":"bar"}},"cur_data":"bad35de7e581","visdat":{"bad35de7e581":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div id="table" class="section level2 tabset">
+<h2 class="tabset">Table</h2>
+<table>
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">all_p_mr</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">3604</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">11</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">factor</td>
+<td align="left">8</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">3</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: factor</strong></p>
+<table>
+<colgroup>
+<col width="20%" />
+<col width="9%" />
+<col width="13%" />
+<col width="7%" />
+<col width="8%" />
+<col width="39%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="left">ordered</th>
+<th align="right">n_unique</th>
+<th align="left">top_counts</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">gender</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">FALSE</td>
+<td align="right">2</td>
+<td align="left">Fem: 1822, Mal: 1782</td>
+</tr>
+<tr class="even">
+<td align="left">education_level</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">FALSE</td>
+<td align="right">5</td>
+<td align="left">Som: 1344, Col: 981, Hig: 820, 9-1: 317</td>
+</tr>
+<tr class="odd">
+<td align="left">snore_freq</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">FALSE</td>
+<td align="right">4</td>
+<td align="left">Fre: 1037, Rar: 1016, Nev: 888, Occ: 663</td>
+</tr>
+<tr class="even">
+<td align="left">if_trouble_sleeping</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">FALSE</td>
+<td align="right">2</td>
+<td align="left">No: 2632, Yes: 972</td>
+</tr>
+<tr class="odd">
+<td align="left">feel_sleepy_freq</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">FALSE</td>
+<td align="right">5</td>
+<td align="left">Som: 1277, Rar: 866, Oft: 691, Nev: 481</td>
+</tr>
+<tr class="even">
+<td align="left">if_enough_sleep</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">FALSE</td>
+<td align="right">2</td>
+<td align="left">TRU: 2684, FAL: 920</td>
+</tr>
+<tr class="odd">
+<td align="left">drink_freq_last_year</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">FALSE</td>
+<td align="right">10</td>
+<td align="left">2 t: 690, 3 t: 471, 1 t: 452, 2 t: 387</td>
+</tr>
+<tr class="even">
+<td align="left">more_drink_freq</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">FALSE</td>
+<td align="right">11</td>
+<td align="left">Nev: 1826, 1 t: 499, 3 t: 293, 2 t: 257</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col width="22%" />
+<col width="12%" />
+<col width="17%" />
+<col width="7%" />
+<col width="7%" />
+<col width="3%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="6%" />
+<col width="7%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">age</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">39.75</td>
+<td align="right">11.92</td>
+<td align="right">20</td>
+<td align="right">29</td>
+<td align="right">40</td>
+<td align="right">50</td>
+<td align="right">60</td>
+<td align="left">▇▇▇▆▇</td>
+</tr>
+<tr class="even">
+<td align="left">depression_score</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">3.58</td>
+<td align="right">4.59</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">5</td>
+<td align="right">29</td>
+<td align="left">▇▂▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">more_drink_30days</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1.56</td>
+<td align="right">4.39</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">30</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

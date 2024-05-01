@@ -1,7 +1,7 @@
-name: "my-website"
+name: "Sleep Sufficiency Factor Analysis"
 output_dir: "."
 navbar:
-  title: "JSC370 Lab12"
+  title: "Sleep Sufficiency Factor Analysis"
   left:
     - text: "Home"
       href: index.html
@@ -9,8 +9,8 @@ navbar:
       href: data.html
     - text: "Model"
       href: model.html
-    - text: "Analysis"
-      href: analysis.html
+    - text: "Report link"
+      href: https://github.com/xgao28/Sleep-Sufficiency-Factor-Analysis/blob/main/paper/Sleep_Sufficiency_Factor_Analysis.pdf
   right:
     - text: "My account"
       href: https://github.com/xgao28
