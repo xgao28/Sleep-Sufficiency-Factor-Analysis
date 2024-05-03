@@ -2,7 +2,9 @@
 
 # Links:
 
-To website: https://github.com/xgao28/Sleep-Sufficiency-Factor-Analysis/
+To website: https://xgao28.github.io/Sleep-Sufficiency-Factor-Analysis/
+
+To GitHub repository (here): https://github.com/xgao28/Sleep-Sufficiency-Factor-Analysis/
 
 To paper: https://github.com/xgao28/Sleep-Sufficiency-Factor-Analysis/blob/main/paper/Sleep_Sufficiency_Factor_Analysis.pdf
 
@@ -14,3 +16,6 @@ This study investigates the factors associated with sufficient sleep duration am
 
 For data retrieval, [`nhanesA` package](https://www.rdocumentation.org/packages/nhanesA/versions/1.1) is used, which downloads a table from the NHANES website as is per call. Therefore, the code suffices to be fully reproducible without a data folder.
 
+# And more
+
+Please refer to the website or paper with the link above!
